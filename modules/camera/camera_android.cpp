@@ -415,6 +415,27 @@ void CameraFeedAndroid::handle_rotation_change() {
 	_set_rotation();
 }
 
+bool CameraFeedAndroid::get_torch() const {
+	ACameraMetadata_const_entry entry;
+	camera_status_t status = ACaptureRequest_getConstEntry(request, ACAMERA_FLASH_MODE, &entry);
+	if (status == ACAMERA_OK && entry.count > 0) {
+		uint8_t mode = entry.data.u8[0];
+		return (mode == ACAMERA_FLASH_MODE_TORCH);
+	}
+	return false;
+}
+
+void CameraFeedAndroid::set_torch(bool p_enabled) {
+    if (!is_active()) {
+		print_error("Feed is inactive");
+		return;
+	}
+
+    uint8_t flash_mode = p_enabled ? ACAMERA_FLASH_MODE_TORCH : ACAMERA_FLASH_MODE_OFF;
+    ACaptureRequest_setEntry_u8(request, ACAMERA_FLASH_MODE, 1, &flash_mode);
+    ACameraCaptureSession_setRepeatingRequest(session, nullptr, 1, &request, nullptr);
+}
+
 // In-place stride compaction (handles row padding).
 void CameraFeedAndroid::compact_stride_inplace(uint8_t *data, size_t width, int height, size_t stride) {
 	if (stride <= width) {
@@ -660,6 +681,9 @@ void CameraFeedAndroid::onSessionClosed(void *context, ACameraCaptureSession *p_
 }
 
 void CameraFeedAndroid::deactivate_feed() {
+	// Turning off the torch before the camera session is disposed.
+	set_torch(false);
+
 	// Signal that deactivation is in progress. This prevents onImage callbacks
 	// from using resources that may be deleted during cleanup.
 	is_deactivating.set();

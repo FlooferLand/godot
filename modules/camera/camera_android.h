@@ -116,6 +116,8 @@ public:
 	void handle_pause();
 	void handle_resume();
 	void handle_rotation_change();
+	bool get_torch() const override;
+	void set_torch(bool p_enabled) override;
 
 	CameraFeedAndroid(ACameraManager *manager, ACameraMetadata *metadata, const char *id,
 			CameraFeed::FeedPosition position, int32_t orientation);

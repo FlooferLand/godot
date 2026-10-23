@@ -55,6 +55,9 @@ void CameraFeed::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_external", "width", "height"), &CameraFeed::set_external);
 	ClassDB::bind_method(D_METHOD("get_texture_tex_id", "feed_image_type"), &CameraFeed::get_texture_tex_id);
 
+	ClassDB::bind_method(D_METHOD("get_torch"), &CameraFeed::get_torch);
+	ClassDB::bind_method(D_METHOD("set_torch", "enabled"), &CameraFeed::set_torch);
+
 	ClassDB::bind_method(D_METHOD("get_datatype"), &CameraFeed::get_datatype);
 
 	ClassDB::bind_method(D_METHOD("get_formats"), &CameraFeed::get_formats);
@@ -299,6 +302,14 @@ void CameraFeed::set_external(int p_width, int p_height) {
 	// Most of the time the pixel data of camera devices comes from threads outside Godot.
 	// Defer `frame_changed` signals to ensure they are emitted on Godot's main thread.
 	call_deferred("emit_signal", frame_changed_signal_name);
+}
+
+bool CameraFeed::get_torch() const {
+	return false;
+}
+
+void CameraFeed::set_torch(bool p_enabled) {
+	// Placeholder
 }
 
 bool CameraFeed::activate_feed() {

@@ -117,6 +117,9 @@ public:
 	void set_ycbcr_images(const Ref<Image> &p_y_img, const Ref<Image> &p_cbcr_img);
 	void set_external(int p_width, int p_height);
 
+	virtual bool get_torch() const;
+	virtual void set_torch(bool p_enabled);
+
 	virtual bool set_format(int p_index, const Dictionary &p_parameters);
 	virtual Array get_formats() const;
 	virtual FeedFormat get_format() const;
